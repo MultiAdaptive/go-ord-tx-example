@@ -1,21 +1,22 @@
 package main
 
 import (
+	"log"
+
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/vincentdebug/go-ord-tx/ord"
-	"log"
 )
 
 func main() {
-	netParams := &chaincfg.SigNetParams
+	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
-		Host:         "localhost:8336",
-		User:         "yourrpcuser",
-		Pass:         "yourrpcpass",
+		Host:         "127.0.0.1:18443/wallet/newwallet.dat",
+		User:         "user1",
+		Pass:         "pwd123",
 		HTTPPostMode: true,
 		DisableTLS:   true,
 	}
@@ -28,7 +29,7 @@ func main() {
 
 	commitTxOutPointList := make([]*wire.OutPoint, 0)
 	// you can get from `client.ListUnspent()`
-	utxoAddress := "tb1p8lh4np5824u48ppawq3numsm7rss0de4kkxry0z70dcfwwwn2fcspyyhc7"
+	utxoAddress := "bcrt1ql7y35t85up7jefjyldre3yfmy804ml9xjdaxpr"
 	address, err := btcutil.DecodeAddress(utxoAddress, netParams)
 	if err != nil {
 		log.Fatalf("decode address err %v", err)
@@ -48,23 +49,25 @@ func main() {
 	}
 
 	// or manual
-	{
-		inTxid, err := chainhash.NewHashFromStr("6b5d9c6010e108458d34377c914c6b9f85703bf8dd17c01dd50782be5902119e")
-		if err != nil {
-			log.Fatalf("decode in hash err %v", err)
+	/*
+		{
+			inTxid, err := chainhash.NewHashFromStr("6b5d9c6010e108458d34377c914c6b9f85703bf8dd17c01dd50782be5902119e")
+			if err != nil {
+				log.Fatalf("decode in hash err %v", err)
+			}
+			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
+			inTxid, err = chainhash.NewHashFromStr("259f3eb2ed6978078dbbba2319db33fb5e3cb4a165df15210494d39154cd6fdb")
+			if err != nil {
+				log.Fatalf("decode in hash err %v", err)
+			}
+			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
+			inTxid, err = chainhash.NewHashFromStr("0eac8881067a40f6b0ed9b87c042f0d81e879a5e9bbfc195fa56121b507ca990")
+			if err != nil {
+				log.Fatalf("decode in hash err %v", err)
+			}
+			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
 		}
-		commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-		inTxid, err = chainhash.NewHashFromStr("259f3eb2ed6978078dbbba2319db33fb5e3cb4a165df15210494d39154cd6fdb")
-		if err != nil {
-			log.Fatalf("decode in hash err %v", err)
-		}
-		commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-		inTxid, err = chainhash.NewHashFromStr("0eac8881067a40f6b0ed9b87c042f0d81e879a5e9bbfc195fa56121b507ca990")
-		if err != nil {
-			log.Fatalf("decode in hash err %v", err)
-		}
-		commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-	}
+	*/
 
 	dataList := make([]ord.InscriptionData, 0)
 
