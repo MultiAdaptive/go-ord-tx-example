@@ -14,7 +14,7 @@ import (
 func main() {
 	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
-		Host:         "127.0.0.1:18443/wallet/newwallet.dat",
+		Host:         "127.0.0.1:18443/wallet/hdd",
 		User:         "user1",
 		Pass:         "pwd123",
 		HTTPPostMode: true,
@@ -29,7 +29,7 @@ func main() {
 
 	commitTxOutPointList := make([]*wire.OutPoint, 0)
 	// you can get from `client.ListUnspent()`
-	utxoAddress := "bcrt1ql7y35t85up7jefjyldre3yfmy804ml9xjdaxpr"
+	utxoAddress := "bcrt1qkdv0tchxy33ctx4h33squ0ym39say6dwxwvuft"
 	address, err := btcutil.DecodeAddress(utxoAddress, netParams)
 	if err != nil {
 		log.Fatalf("decode address err %v", err)
