@@ -77,17 +77,17 @@ func main() {
 		Destination: "tb1p3m6qfu0mzkxsmaue0hwekrxm2nxfjjrmv4dvy94gxs8c3s7zns6qcgf8ef",
 	})
 
-	dataList = append(dataList, ord.InscriptionData{
-		ContentType: "text/plain;charset=utf-8",
-		Body:        []byte("Create for Bob"),
-		Destination: "tb1pkz6c8cpsszcdq8n2qf8msk45qxmgpl8prwrs544305ew6vrrwc8spraf2z",
-	})
+	// dataList = append(dataList, ord.InscriptionData{
+	// 	ContentType: "text/plain;charset=utf-8",
+	// 	Body:        []byte("Create for Bob"),
+	// 	Destination: "tb1pkz6c8cpsszcdq8n2qf8msk45qxmgpl8prwrs544305ew6vrrwc8spraf2z",
+	// })
 
-	dataList = append(dataList, ord.InscriptionData{
-		ContentType: "text/plain;charset=utf-8",
-		Body:        []byte("Create for Charlie"),
-		Destination: "tb1pvxylf6kejgfa0jnp0e98xhajwwuqw55m0v37p0d8ywr6ang03hhqxmmfh2",
-	})
+	// dataList = append(dataList, ord.InscriptionData{
+	// 	ContentType: "text/plain;charset=utf-8",
+	// 	Body:        []byte("Create for Charlie"),
+	// 	Destination: "tb1pvxylf6kejgfa0jnp0e98xhajwwuqw55m0v37p0d8ywr6ang03hhqxmmfh2",
+	// })
 
 	request := ord.InscriptionRequest{
 		CommitTxOutPointList: commitTxOutPointList,
