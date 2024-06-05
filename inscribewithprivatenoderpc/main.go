@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	kzg_sdk "github.com/MultiAdaptive/kzg-sdk"
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
@@ -10,6 +11,8 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/vincentdebug/go-ord-tx/ord"
 )
+
+const dSrsSize = 1 << 16
 
 func main() {
 	netParams := &chaincfg.RegressionNetParams
@@ -47,47 +50,21 @@ func main() {
 		}
 		commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, unspentList[i].Vout))
 	}
-
-	// or manual
-	/*
-		{
-			inTxid, err := chainhash.NewHashFromStr("6b5d9c6010e108458d34377c914c6b9f85703bf8dd17c01dd50782be5902119e")
-			if err != nil {
-				log.Fatalf("decode in hash err %v", err)
-			}
-			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-			inTxid, err = chainhash.NewHashFromStr("259f3eb2ed6978078dbbba2319db33fb5e3cb4a165df15210494d39154cd6fdb")
-			if err != nil {
-				log.Fatalf("decode in hash err %v", err)
-			}
-			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-			inTxid, err = chainhash.NewHashFromStr("0eac8881067a40f6b0ed9b87c042f0d81e879a5e9bbfc195fa56121b507ca990")
-			if err != nil {
-				log.Fatalf("decode in hash err %v", err)
-			}
-			commitTxOutPointList = append(commitTxOutPointList, wire.NewOutPoint(inTxid, 1))
-		}
-	*/
-
+	kzgsdk, err := kzg_sdk.InitDomiconSdk(dSrsSize, "./srs")
+	if err != nil {
+		log.Fatalf("kzg sdk InitDomiconSdk failed")
+	}
+	cm, err := kzgsdk.GenerateDataCommit([]byte("multiadaptive data"))
+	if err != nil {
+		log.Fatalf("kzg sdk GenerateDataCommit failed")
+	}
+	dataCM := cm.Bytes()
 	dataList := make([]ord.InscriptionData, 0)
-
 	dataList = append(dataList, ord.InscriptionData{
 		ContentType: "text/plain;charset=utf-8",
-		Body:        []byte("Create for Alice"),
+		Body:        dataCM[:],
 		Destination: "tb1p3m6qfu0mzkxsmaue0hwekrxm2nxfjjrmv4dvy94gxs8c3s7zns6qcgf8ef",
 	})
-
-	// dataList = append(dataList, ord.InscriptionData{
-	// 	ContentType: "text/plain;charset=utf-8",
-	// 	Body:        []byte("Create for Bob"),
-	// 	Destination: "tb1pkz6c8cpsszcdq8n2qf8msk45qxmgpl8prwrs544305ew6vrrwc8spraf2z",
-	// })
-
-	// dataList = append(dataList, ord.InscriptionData{
-	// 	ContentType: "text/plain;charset=utf-8",
-	// 	Body:        []byte("Create for Charlie"),
-	// 	Destination: "tb1pvxylf6kejgfa0jnp0e98xhajwwuqw55m0v37p0d8ywr6ang03hhqxmmfh2",
-	// })
 
 	request := ord.InscriptionRequest{
 		CommitTxOutPointList: commitTxOutPointList,
