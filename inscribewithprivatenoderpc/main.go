@@ -5,6 +5,7 @@ import (
 	"log"
 
 	kzg_sdk "github.com/MultiAdaptive/kzg-sdk"
+	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
@@ -65,13 +66,37 @@ func main() {
 		Destination: changeaddr.String(),
 	})
 
+	// nodePubKey, _ := btcec.NewPrivateKey()
+	// pubkeyHexStr := hex.EncodeToString(nodePubKey.PubKey().SerializeCompressed())
+	// pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
+	// newPubKey, _ := btcec.ParsePubKey(pubkeyHex)
+	// fmt.Println("pk1", hex.EncodeToString(nodePubKey.PubKey().SerializeCompressed()))
+	// fmt.Println("pk2", hex.EncodeToString(newPubKey.SerializeCompressed()))
+
+	// nodeUrl := ""
+	// rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
+	// if err != nil {
+	// 	log.Fatalf("dial node failed, %v", err)
+	// }
+	// defer rpcCli.Close()
+
+	pubkeyHexStr := ""
+	pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
+	nodePubKey, _ := btcec.ParsePubKey(pubkeyHex)
+	sigNode := ord.SignNodeInfo{
+		RpcClient: nil,
+		PublicKey: nodePubKey,
+	}
+
+	sigNodes := make([]*ord.SignNodeInfo, 0)
+	sigNodes = append(sigNodes, &sigNode)
 	request := ord.InscriptionRequest{
 		CommitTxOutPointList: commitTxOutPointList,
 		CommitFeeRate:        25,
 		FeeRate:              26,
 		DataList:             dataList,
 		SingleRevealTxOnly:   false,
-		SignNodes:            []*ord.SignNodeInfo{},
+		SignNodes:            sigNodes,
 	}
 
 	tool, err := ord.NewInscriptionTool(netParams, client, &request)
