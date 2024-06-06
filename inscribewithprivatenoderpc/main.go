@@ -71,6 +71,7 @@ func main() {
 		FeeRate:              26,
 		DataList:             dataList,
 		SingleRevealTxOnly:   false,
+		SignNodes:            []*ord.SignNodeInfo{},
 	}
 
 	tool, err := ord.NewInscriptionTool(netParams, client, &request)
