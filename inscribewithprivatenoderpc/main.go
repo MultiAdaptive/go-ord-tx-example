@@ -55,7 +55,6 @@ func main() {
 	for i := range originData {
 		originData[i] = 1
 	}
-	//fmt.Println("originData", originData)
 	cm, proof, err := kzgsdk.GenerateDataCommitAndProof(originData)
 	if err != nil {
 		log.Fatalf("kzg sdk GenerateDataCommitAndProof failed, %v", err)
@@ -72,21 +71,12 @@ func main() {
 	dataList := make([]ord.InscriptionData, 0)
 	dataList = append(dataList, ord.InscriptionData{
 		ContentType:       "MultiAaptiveCM;charset=utf-8",
-		Body:              dataCM[:],
+		DataCM:            dataCM[:],
+		DataOrigin:        originData,
 		Destination:       changeaddr.String(),
 		ProofH:            dataProofH[:],
 		ProofClaimedValue: dataProofClaimedValue[:],
 	})
-
-	// priKey, _ := btcec.NewPrivateKey()
-	// pubkey := hex.EncodeToString(priKey.PubKey().SerializeCompressed())
-	// privateHexStr := hex.EncodeToString(priKey.Serialize())
-	// fmt.Println("privateHexStr", privateHexStr)
-	// fmt.Println("pubkeyHexStr", pubkey)
-	// pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
-	// newPubKey, _ := btcec.ParsePubKey(pubkeyHex)
-	// fmt.Println("pk1", hex.EncodeToString(nodePubKey.PubKey().SerializeCompressed()))
-	// fmt.Println("pk2", hex.EncodeToString(newPubKey.SerializeCompressed()))
 
 	nodeUrl := "http://13.125.118.52:8545"
 	rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
@@ -97,10 +87,10 @@ func main() {
 
 	pubkeyHexStr := "020b0bae055c4e33c8561c080e8dd6c80b9f40f4a7fdf406c8c1da3b68dbc8a9f2"
 	pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
-	nodePriKey, _ := btcec.ParsePubKey(pubkeyHex)
+	nodePubKey, _ := btcec.ParsePubKey(pubkeyHex)
 	sigNode := ord.SignNodeInfo{
 		RpcClient: rpcCli,
-		PublicKey: nodePriKey,
+		PublicKey: nodePubKey,
 	}
 
 	sigNodes := make([]*ord.SignNodeInfo, 0)

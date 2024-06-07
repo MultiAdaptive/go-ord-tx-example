@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/btcsuite/btcd/btcutil"
@@ -11,9 +15,6 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/vincentdebug/go-ord-tx/ord"
 	"github.com/vincentdebug/go-ord-tx/pkg/btcapi/mempool"
-	"log"
-	"net/http"
-	"os"
 )
 
 func main() {
@@ -73,7 +74,7 @@ func main() {
 		DataList: []ord.InscriptionData{
 			{
 				ContentType: contentType,
-				Body:        fileContent,
+				DataCM:      fileContent,
 				Destination: destination,
 			},
 		},

@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/hex"
+	"log"
+
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/btcsuite/btcd/btcutil"
@@ -10,7 +12,6 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/vincentdebug/go-ord-tx/ord"
 	"github.com/vincentdebug/go-ord-tx/pkg/btcapi/mempool"
-	"log"
 )
 
 func main() {
@@ -46,7 +47,7 @@ func main() {
 
 	dataList = append(dataList, ord.InscriptionData{
 		ContentType: "text/plain;charset=utf-8",
-		Body:        []byte("Create Without full Node "),
+		DataCM:      []byte("Create Without full Node "),
 		Destination: "tb1p3m6qfu0mzkxsmaue0hwekrxm2nxfjjrmv4dvy94gxs8c3s7zns6qcgf8ef",
 	})
 
