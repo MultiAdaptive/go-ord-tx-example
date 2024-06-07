@@ -3,18 +3,18 @@ module go-ord-tx-example
 go 1.20
 
 require (
-	github.com/MultiAdaptive/kzg-sdk v1.1.5
+	github.com/MultiAdaptive/kzg-sdk v1.1.7
 	github.com/btcsuite/btcd v0.24.0
 	github.com/btcsuite/btcd/btcec/v2 v2.3.3
 	github.com/btcsuite/btcd/btcutil v1.1.5
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0
+	github.com/ethereum/go-ethereum v1.13.4
 	github.com/tyler-smith/go-bip39 v1.1.0
 	github.com/vincentdebug/go-ord-tx v1.0.1
 )
 
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/MultiAdaptive/sig-sdk v0.1.1 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/aead/siphash v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
@@ -26,7 +26,7 @@ require (
 	github.com/deckarep/golang-set/v2 v2.6.0 // indirect
 	github.com/decred/dcrd/crypto/blake256 v1.0.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
-	github.com/ethereum/go-ethereum v1.13.4 // indirect
+	github.com/domicon-labs/kzg-sdk v1.1.7 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
@@ -46,3 +46,5 @@ require (
 replace github.com/vincentdebug/go-ord-tx => ../go-ord-tx
 
 replace github.com/MultiAdaptive/sig-sdk => ../sig-sdk
+
+replace github.com/MultiAdaptive/kzg-sdk => ../kzg-sdk

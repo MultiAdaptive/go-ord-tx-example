@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/hex"
 	"log"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/vincentdebug/go-ord-tx/ord"
 )
 
@@ -18,9 +20,9 @@ const dSrsSize = 1 << 16
 func main() {
 	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
-		Host:         "127.0.0.1:18443/wallet/hdd",
-		User:         "user1",
-		Pass:         "pwd123",
+		Host:         "52.221.9.230:18332/wallet/newwallet.dat",
+		User:         "testuser",
+		Pass:         "123456",
 		HTTPPostMode: true,
 		DisableTLS:   true,
 	}
@@ -49,51 +51,64 @@ func main() {
 	if err != nil {
 		log.Fatalf("kzg sdk InitDomiconSdk failed")
 	}
-	cm, err := kzgsdk.GenerateDataCommit([]byte("multiadaptive data"))
+	originData := make([]byte, 1024)
+	for i := range originData {
+		originData[i] = 1
+	}
+	//fmt.Println("originData", originData)
+	cm, proof, err := kzgsdk.GenerateDataCommitAndProof(originData)
 	if err != nil {
-		log.Fatalf("kzg sdk GenerateDataCommit failed")
+		log.Fatalf("kzg sdk GenerateDataCommitAndProof failed, %v", err)
 	}
 	dataCM := cm.Bytes()
 	log.Println("dataCM:", hex.EncodeToString(dataCM[:]))
+	dataProofH := proof.H.Bytes()
+	dataProofClaimedValue := proof.ClaimedValue.Bytes()
 	changeaddr, err := client.GetNewAddress("default")
 	if err != nil {
 		log.Fatalf("GetRawChangeAddress failed with error:%v", err)
 	}
+
 	dataList := make([]ord.InscriptionData, 0)
 	dataList = append(dataList, ord.InscriptionData{
-		ContentType: "text/plain;charset=utf-8",
-		Body:        dataCM[:],
-		Destination: changeaddr.String(),
+		ContentType:       "MultiAaptiveCM;charset=utf-8",
+		Body:              dataCM[:],
+		Destination:       changeaddr.String(),
+		ProofH:            dataProofH[:],
+		ProofClaimedValue: dataProofClaimedValue[:],
 	})
 
-	// nodePubKey, _ := btcec.NewPrivateKey()
-	// pubkeyHexStr := hex.EncodeToString(nodePubKey.PubKey().SerializeCompressed())
+	// priKey, _ := btcec.NewPrivateKey()
+	// pubkey := hex.EncodeToString(priKey.PubKey().SerializeCompressed())
+	// privateHexStr := hex.EncodeToString(priKey.Serialize())
+	// fmt.Println("privateHexStr", privateHexStr)
+	// fmt.Println("pubkeyHexStr", pubkey)
 	// pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
 	// newPubKey, _ := btcec.ParsePubKey(pubkeyHex)
 	// fmt.Println("pk1", hex.EncodeToString(nodePubKey.PubKey().SerializeCompressed()))
 	// fmt.Println("pk2", hex.EncodeToString(newPubKey.SerializeCompressed()))
 
-	// nodeUrl := ""
-	// rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
-	// if err != nil {
-	// 	log.Fatalf("dial node failed, %v", err)
-	// }
-	// defer rpcCli.Close()
+	nodeUrl := "http://13.125.118.52:8545"
+	rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
+	if err != nil {
+		log.Fatalf("dial node failed, %v", err)
+	}
+	defer rpcCli.Close()
 
-	pubkeyHexStr := ""
+	pubkeyHexStr := "020b0bae055c4e33c8561c080e8dd6c80b9f40f4a7fdf406c8c1da3b68dbc8a9f2"
 	pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
-	nodePubKey, _ := btcec.ParsePubKey(pubkeyHex)
+	nodePriKey, _ := btcec.ParsePubKey(pubkeyHex)
 	sigNode := ord.SignNodeInfo{
-		RpcClient: nil,
-		PublicKey: nodePubKey,
+		RpcClient: rpcCli,
+		PublicKey: nodePriKey,
 	}
 
 	sigNodes := make([]*ord.SignNodeInfo, 0)
 	sigNodes = append(sigNodes, &sigNode)
 	request := ord.InscriptionRequest{
 		CommitTxOutPointList: commitTxOutPointList,
-		CommitFeeRate:        25,
-		FeeRate:              26,
+		CommitFeeRate:        200,
+		FeeRate:              100,
 		DataList:             dataList,
 		SingleRevealTxOnly:   false,
 		SignNodes:            sigNodes,
