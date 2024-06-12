@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 
 	kzg_sdk "github.com/MultiAdaptive/kzg-sdk"
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -52,14 +54,12 @@ func main() {
 		log.Fatalf("Failed to create RPC client: %v", err)
 	}
 	defer client.Shutdown()
-	log.Println("start2")
 	commitTxOutPointList := make([]*wire.OutPoint, 0)
 
 	unspentList, err := client.ListUnspent()
 	if err != nil {
 		log.Fatalf("list err err %v", err)
 	}
-	log.Println("start3")
 	for i := range unspentList {
 		inTxid, err := chainhash.NewHashFromStr(unspentList[i].TxID)
 		if err != nil {
@@ -71,9 +71,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("kzg sdk InitDomiconSdk failed")
 	}
+	rand.Seed(time.Now().UnixNano())
 	originData := make([]byte, 1024)
 	for i := range originData {
-		originData[i] = 1
+		originData[i] = uint8(rand.Intn(256))
 	}
 	cm, proof, err := kzgsdk.GenerateDataCommitAndProof(originData)
 	if err != nil {
