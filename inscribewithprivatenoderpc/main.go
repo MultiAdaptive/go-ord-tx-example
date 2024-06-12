@@ -35,10 +35,12 @@ func main() {
 		log.Fatal("please set environments: BTCHOST, BTCUSER, BTCPASS")
 	}
 
-	maNodeRPC := os.Getenv("MULTIADAPTIVENODERPC")
-	maNodePubKey := os.Getenv("MULTIADAPTIVENODEPUBKEY")
-	if maNodeRPC == "" || maNodePubKey == "" {
-		log.Fatal("please set envrionments: MULTIADAPTIVENODERPC, MULTIADAPTIVENODEPUBKEY")
+	maNodeRPC1 := os.Getenv("MULTIADAPTIVENODERPC1")
+	maNodePubKey1 := os.Getenv("MULTIADAPTIVENODEPUBKEY1")
+	maNodeRPC2 := os.Getenv("MULTIADAPTIVENODERPC2")
+	maNodePubKey2 := os.Getenv("MULTIADAPTIVENODEPUBKEY2")
+	if maNodeRPC1 == "" || maNodePubKey1 == "" || maNodeRPC2 == "" || maNodePubKey2 == "" {
+		log.Fatal("please set envrionments: MULTIADAPTIVENODERPC1, MULTIADAPTIVENODEPUBKEY1, MULTIADAPTIVENODERPC2, MULTIADAPTIVENODEPUBKEY2 ")
 	}
 	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
@@ -99,23 +101,35 @@ func main() {
 		ProofClaimedValue: dataProofClaimedValue[:],
 	})
 
-	nodeUrl := maNodeRPC //"http://13.125.118.52:8545"
-	rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
+	rpcCli1, err := rpc.DialOptions(context.Background(), maNodeRPC1)
 	if err != nil {
 		log.Fatalf("dial node failed, %v", err)
 	}
-	defer rpcCli.Close()
+	defer rpcCli1.Close()
 
-	pubkeyHexStr := maNodePubKey //"020b0bae055c4e33c8561c080e8dd6c80b9f40f4a7fdf406c8c1da3b68dbc8a9f2"
-	pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
-	nodePubKey, _ := btcec.ParsePubKey(pubkeyHex)
-	sigNode := ord.SignNodeInfo{
-		RpcClient: rpcCli,
-		PublicKey: nodePubKey,
+	pubkeyHex1, _ := hex.DecodeString(maNodePubKey1)
+	nodePubKey1, _ := btcec.ParsePubKey(pubkeyHex1)
+	sigNode1 := ord.SignNodeInfo{
+		RpcClient: rpcCli1,
+		PublicKey: nodePubKey1,
+	}
+
+	rpcCli2, err := rpc.DialOptions(context.Background(), maNodeRPC2)
+	if err != nil {
+		log.Fatalf("dial node failed, %v", err)
+	}
+	defer rpcCli2.Close()
+	pubkeyHex2, _ := hex.DecodeString(maNodePubKey2)
+	nodePubKey2, _ := btcec.ParsePubKey(pubkeyHex2)
+	sigNode2 := ord.SignNodeInfo{
+		RpcClient: rpcCli2,
+		PublicKey: nodePubKey2,
 	}
 
 	sigNodes := make([]*ord.SignNodeInfo, 0)
-	sigNodes = append(sigNodes, &sigNode)
+	sigNodes = append(sigNodes, &sigNode1)
+	sigNodes = append(sigNodes, &sigNode2)
+
 	request := ord.InscriptionRequest{
 		CommitTxOutPointList: commitTxOutPointList,
 		CommitFeeRate:        200,
@@ -129,10 +143,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create inscription tool: %v", err)
 	}
-	err = tool.BackupRecoveryKeyToRpcNode()
-	if err != nil {
-		log.Fatalf("Failed to backup recovery key: %v", err)
-	}
+	// err = tool.BackupRecoveryKeyToRpcNode()
+	// if err != nil {
+	// 	log.Fatalf("Failed to backup recovery key: %v", err)
+	// }
 	commitTxHash, revealTxHashList, inscriptions, fees, err := tool.Inscribe()
 	if err != nil {
 		log.Fatalf("send tx errr, %v", err)
