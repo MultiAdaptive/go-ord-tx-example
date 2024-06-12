@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"log"
+	"os"
 
 	kzg_sdk "github.com/MultiAdaptive/kzg-sdk"
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -18,11 +19,30 @@ import (
 const dSrsSize = 1 << 16
 
 func main() {
+	// for i := 0; i < 3; i++ {
+	// 	privatekey, _ := btcec.NewPrivateKey()
+	// 	pubkey := privatekey.PubKey()
+	// 	log.Println("private key:", hex.EncodeToString(privatekey.Serialize()))
+	// 	log.Println("public key:", hex.EncodeToString(pubkey.SerializeCompressed()))
+	// }
+
+	host := os.Getenv("BTCHOST")
+	user := os.Getenv("BTCUSER")
+	pass := os.Getenv("BTCPASS")
+	if host == "" || user == "" || pass == "" {
+		log.Fatal("please set environments: BTCHOST, BTCUSER, BTCPASS")
+	}
+
+	maNodeRPC := os.Getenv("MULTIADAPTIVENODERPC")
+	maNodePubKey := os.Getenv("MULTIADAPTIVENODEPUBKEY")
+	if maNodeRPC == "" || maNodePubKey == "" {
+		log.Fatal("please set envrionments: MULTIADAPTIVENODERPC, MULTIADAPTIVENODEPUBKEY")
+	}
 	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
-		Host:         "52.221.9.230:18332/wallet/newwallet.dat",
-		User:         "testuser",
-		Pass:         "123456",
+		Host:         host, //"13.228.170.151:18443/wallet/test-wallet-1",
+		User:         user, //"multiadaptiveUser1",
+		Pass:         pass, //"pwd123",
 		HTTPPostMode: true,
 		DisableTLS:   true,
 	}
@@ -32,14 +52,14 @@ func main() {
 		log.Fatalf("Failed to create RPC client: %v", err)
 	}
 	defer client.Shutdown()
-
+	log.Println("start2")
 	commitTxOutPointList := make([]*wire.OutPoint, 0)
 
 	unspentList, err := client.ListUnspent()
 	if err != nil {
 		log.Fatalf("list err err %v", err)
 	}
-
+	log.Println("start3")
 	for i := range unspentList {
 		inTxid, err := chainhash.NewHashFromStr(unspentList[i].TxID)
 		if err != nil {
@@ -78,14 +98,14 @@ func main() {
 		ProofClaimedValue: dataProofClaimedValue[:],
 	})
 
-	nodeUrl := "http://13.125.118.52:8545"
+	nodeUrl := maNodeRPC //"http://13.125.118.52:8545"
 	rpcCli, err := rpc.DialOptions(context.Background(), nodeUrl)
 	if err != nil {
 		log.Fatalf("dial node failed, %v", err)
 	}
 	defer rpcCli.Close()
 
-	pubkeyHexStr := "020b0bae055c4e33c8561c080e8dd6c80b9f40f4a7fdf406c8c1da3b68dbc8a9f2"
+	pubkeyHexStr := maNodePubKey //"020b0bae055c4e33c8561c080e8dd6c80b9f40f4a7fdf406c8c1da3b68dbc8a9f2"
 	pubkeyHex, _ := hex.DecodeString(pubkeyHexStr)
 	nodePubKey, _ := btcec.ParsePubKey(pubkeyHex)
 	sigNode := ord.SignNodeInfo{
