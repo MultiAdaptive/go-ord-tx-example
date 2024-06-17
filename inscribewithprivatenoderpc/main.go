@@ -74,7 +74,7 @@ func main() {
 		log.Fatalf("kzg sdk InitDomiconSdk failed")
 	}
 	rand.Seed(time.Now().UnixNano())
-	originData := make([]byte, 1024)
+	originData := make([]byte, 1024*1024*5)
 	for i := range originData {
 		originData[i] = uint8(rand.Intn(256))
 	}
