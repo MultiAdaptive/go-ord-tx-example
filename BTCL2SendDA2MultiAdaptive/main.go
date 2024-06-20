@@ -8,26 +8,19 @@ import (
 	"os"
 	"time"
 
-	kzg_sdk "github.com/MultiAdaptive/kzg-sdk"
+	"github.com/MultiAdaptive/go-ord-tx/ord"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcd/wire"
+	kzg_sdk "github.com/domicon-labs/kzg-sdk"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/vincentdebug/go-ord-tx/ord"
 )
 
 const dSrsSize = 1 << 16
 
 func main() {
-	// for i := 0; i < 3; i++ {
-	// 	privatekey, _ := btcec.NewPrivateKey()
-	// 	pubkey := privatekey.PubKey()
-	// 	log.Println("private key:", hex.EncodeToString(privatekey.Serialize()))
-	// 	log.Println("public key:", hex.EncodeToString(pubkey.SerializeCompressed()))
-	// }
-
 	host := os.Getenv("BTCHOST")
 	user := os.Getenv("BTCUSER")
 	pass := os.Getenv("BTCPASS")
@@ -44,9 +37,9 @@ func main() {
 	}
 	netParams := &chaincfg.RegressionNetParams
 	connCfg := &rpcclient.ConnConfig{
-		Host:         host, //"13.228.170.151:18443/wallet/test-wallet-1",
-		User:         user, //"multiadaptiveUser1",
-		Pass:         pass, //"pwd123",
+		Host:         host,
+		User:         user,
+		Pass:         pass,
 		HTTPPostMode: true,
 		DisableTLS:   true,
 	}
@@ -143,10 +136,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create inscription tool: %v", err)
 	}
-	// err = tool.BackupRecoveryKeyToRpcNode()
-	// if err != nil {
-	// 	log.Fatalf("Failed to backup recovery key: %v", err)
-	// }
+
 	commitTxHash, revealTxHashList, inscriptions, fees, err := tool.Inscribe()
 	if err != nil {
 		log.Fatalf("send tx errr, %v", err)
