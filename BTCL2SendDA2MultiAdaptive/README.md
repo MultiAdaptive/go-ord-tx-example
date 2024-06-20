@@ -1,5 +1,6 @@
 # BTCL2SendDA2MultiAdaptive
 
+![图示](images/btcl2.png)
 像铸造铭文一样，用户向MultiAdaptive存储CM也由两笔交易构成。第一笔为commit-tx, 此时我们会通过多签脚本(脚本中包含CM数据)构建一个taproot地址，通过commit-tx向该地址转入一定的代币。第二笔为reveal-tx, 该交易的目的是花费掉taproot地址上的utox，因为该taproot地址是由多签脚本构建的，因此需要MultiAdaptive的多个节点为该交易提供签名。
 
 ## 程序说明
