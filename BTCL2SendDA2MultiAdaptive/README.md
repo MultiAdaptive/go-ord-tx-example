@@ -1,6 +1,8 @@
 # BTCL2SendDA2MultiAdaptive
 ## 简介
-![图示](images/btcl2.png)
+<div style="text-align: center;">
+<img src="images/btcl2.png" alt="图示" width="500" height="300">    
+</div>
 &nbsp;&nbsp;&nbsp;&nbsp;就像铭文铸造协议（ordi）一样，用户向MultiAdaptive存储DA数据也是由两笔交易构成。第一笔为commit-tx, 此时我们会通过多签脚本(脚本中包含CM数据)构建一个taproot地址，通过commit-tx向该地址转入一定的代币。第二笔为reveal-tx, 该交易的目的是花费掉taproot地址上的utxo，因为该taproot地址是由多签脚本构建的，因此需要MultiAdaptive的多个节点为该交易提供签名。通过把CM数据写入比特币脚本，实现了CM的链上存储。
 
 ## 程序说明
