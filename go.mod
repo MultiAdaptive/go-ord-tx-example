@@ -3,7 +3,7 @@ module go-ord-tx-example
 go 1.20
 
 require (
-	github.com/MultiAdaptive/go-ord-tx v1.1.2
+	github.com/MultiAdaptive/go-ord-tx v1.1.3
 	github.com/btcsuite/btcd v0.24.0
 	github.com/btcsuite/btcd/btcec/v2 v2.3.3
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0
