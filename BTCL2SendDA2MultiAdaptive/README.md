@@ -16,6 +16,7 @@
 ```conf
 rpcuser=multiadaptiveUser1
 rpcpassword=pwd123
+halvinginterval=210000
 ```
 - 生成一个新的地址（BTCMINEADDR）
 ```sh
